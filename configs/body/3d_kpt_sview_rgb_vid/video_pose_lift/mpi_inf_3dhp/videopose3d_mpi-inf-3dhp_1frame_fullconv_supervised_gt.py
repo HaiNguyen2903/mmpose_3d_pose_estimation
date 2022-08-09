@@ -60,7 +60,10 @@ model = dict(
     test_cfg=dict(restore_global_position=True))
 
 # data settings
-data_root = 'data/mpi_inf_3dhp'
+# data_root = 'data/mpi_inf_3dhp'
+
+data_root = '/home/ducanh/hain/dataset/MPI_INF/reformatted_data'
+
 train_data_cfg = dict(
     num_joints=17,
     seq_len=1,

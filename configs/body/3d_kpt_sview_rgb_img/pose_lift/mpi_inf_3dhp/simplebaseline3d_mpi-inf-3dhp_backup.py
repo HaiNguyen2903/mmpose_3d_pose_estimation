@@ -54,7 +54,6 @@ model = dict(
 
 # data settings
 data_root = 'data/mpi_inf_3dhp'
-
 train_data_cfg = dict(
     num_joints=17,
     seq_len=1,

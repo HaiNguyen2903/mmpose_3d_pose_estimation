@@ -131,3 +131,8 @@ docs/**/modelzoo.md
 *.pth
 
 *.DS_Store
+
+# additional exp dirs and files
+vis_result
+pretrained_weights
+wandb

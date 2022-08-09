@@ -11,8 +11,13 @@ import mmcv
 import numpy as np
 from scipy.io import loadmat
 
-train_subjects = [i for i in range(1, 9)]
-test_subjects = [i for i in range(1, 7)]
+# train_subjects = [i for i in range(1, 9)]
+# test_subjects = [i for i in range(1, 7)]
+
+
+train_subjects = [i for i in range(1, 2)]
+test_subjects = [i for i in range(1, 6)]
+
 train_seqs = [1, 2]
 train_cams = [0, 1, 2, 4, 5, 6, 7, 8]
 train_frame_nums = {
