@@ -1,3 +1,68 @@
+# Extra Tutorial for running 3D Pose Estimation\
+Since I cannot prepare the Human3.6M dataset, the tutorial will run on the MPI-INF-3DHP dataset.
+
+## Prepare the dataset
+### Step 0. Download the above dataset
+### Step 1. Prepare the dataset for training and testing
+Reformat the dataset to the following format:
+
+```bash
+data_root
+    |-- train
+        |-- S1
+            |-- Seq1
+            |-- Seq2
+        |-- S2
+        |-- ...
+    |-- test
+        |-- TS1
+        |-- TS2
+        |-- ...
+```
+Run the following script to prepare the dataset:
+```bash
+python tools/dataset/preprocess_mpi_inf_3dhp.py --data_root {path to data root} --out_dir {path to out dir}
+```
+The output dir will have the following structure:
+```bash
+data_root
+    |
+    |___annotations
+    |       |___cameras_test.pkl
+    |       |___cameras_train.pkl
+    |       |___joint2d_rel_stats.pkl
+    |       |___joint2d_stats.pkl
+    |       |___joint3d_rel_stats.pkl
+    |       |___joint3d_stats.pkl
+    |       |___mpi_inf_3dhp_test_valid.npz
+    |       |___mpi_inf_3dhp_train.npz
+    |
+    |___images
+            |___*.jpg
+```
+
+## Evaluation and Inference
+To evaluate the dataset:
+```bash
+python tools/test.py {path to config file} {path to model ckpt} --work-dir {out dir}
+```
+
+Where:
+
+```config file```: ```/home/ducanh/hain/code/mmpose_3d_pose_estimation/configs/body/3d_kpt_sview_rgb_vid/video_pose_lift/mpi_inf_3dhp/videopose3d_mpi-inf-3dhp_1frame_fullconv_supervised_gt.py```
+
+```model ckpt```: get model ckpt in ```/home/ducanh/hain/code/mmpose_3d_pose_estimation/configs/body/3d_kpt_sview_rgb_vid/video_pose_lift/mpi_inf_3dhp/videopose3d_mpi-inf-3dhp.yml```
+
+To inference on specific videos:
+```bash
+python demo/body3d_two_stage_video_demo.py demo/mmdetection_cfg/faster_rcnn_r50_fpn_coco.py \ https://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/faster_rcnn_r50_fpn_1x_coco/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth \ configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/hrnet_w48_coco_256x192.py \ https://download.openmmlab.com/mmpose/top_down/hrnet/hrnet_w48_coco_256x192-b9e0b3ab_20200708.pth \ configs/body/3d_kpt_sview_rgb_vid/video_pose_lift/mpi_inf_3dhp/videopose3d_mpi-inf-3dhp_1frame_fullconv_supervised_gt.py \ pretrained_weights/videopose_mpi-inf-3dhp_1frame_fullconv_supervised_gt-d6ed21ef_20210603.pth \
+--video_path /home/ducanh/hain/dataset/yoga_15s.mp4 --out-video-root vis_result --rebase-keypoint-height
+```
+
+Where the args params represents config file and model ckpt for: ```2d bounding boxes detection```, ```2d keypoints detection``` and ```3d keypoints detection``` respectively.
+
+
+# Author's Tutorial
 <div align="center">
   <img src="resources/mmpose-logo.png" width="450"/>
   <div>&nbsp;</div>
