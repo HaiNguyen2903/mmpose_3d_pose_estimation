@@ -1,4 +1,4 @@
-# Extra Tutorial for running 3D Pose Estimation\
+# Extra Tutorial for running 3D Pose Estimation
 Since I cannot prepare the Human3.6M dataset, the tutorial will run on the MPI-INF-3DHP dataset.
 
 ## Prepare the dataset
