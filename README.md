@@ -89,7 +89,7 @@ Where each file has the following format:
 }
 ```
 
-```joint2d_rel_stats.pkl```
+```joint2d_rel_stats.pkl``` (coordinate around root)
 ```bash
 {
     'mean': array shape of (num_joints x 2), # mean of joints coordinates
@@ -105,7 +105,7 @@ Where each file has the following format:
 }
 ```
 
-```joint3d_rel_stats.pkl```
+```joint3d_rel_stats.pkl``` (coordinate around root)
 ```bash
 {
     'mean': array shape of (num_joints x 3), # mean of joints coordinates
@@ -125,7 +125,7 @@ Where each file has the following format:
 ```bash
 {
     'imgname': [], # list of .jpg images
-    'center': [], # list of centers with shape (num_imgs x 2)
+    'center': [], # list of bbox centers with shape (num_imgs x 2)
     'scale': [], # list of Scale factor of bounding box with len num_imgs
     'part': [[[]]], # list of join 2d with shape (num_imgs x num_joins x 3) (include confidence score ?) 
     'S': [[[]]] # list of join 3d with shape (num_imgs x num_joins x 3) (include confidence score ?)
