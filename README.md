@@ -41,6 +41,98 @@ data_root
             |___*.jpg
 ```
 
+Where each file has the following format:
+
+```cameras_test.pkl```
+```bash
+{
+    {
+        'c': arrray[array[], array[]], # camera center, each inner array has len 1 (shape 2x1)
+        'f': arrray[array[], array[]], # camera focal len, each inner array has len 1 (shape 2x1)
+        'w': width, # int
+        'h': height, # int
+        'name': 'test_cam_1'
+    },
+    {
+        'c': arrray[array[], array[]], # camera center, each inner array has len 1 (shape 2x1)
+        'f': arrray[array[], array[]], # camera focal len, each inner array has len 1 (shape 2x1)
+        'w': width, # int
+        'h': height, # int
+        'name': 'test_cam_2'
+    },
+    ...
+}
+```
+
+```cameras_train.pkl```
+```bash
+{
+    {
+        'R': arrray[array[], array[], array[]] # rotation matrix, each inner array has len 3 (shape 3x3)
+        'T': arrray[array[], array[], array[]] # rotation matrix, each inner array has len 1 (shape 3x1)
+        'c': arrray[array[], array[]], # camera center, each inner array has len 1 (shape 2x1)
+        'f': arrray[array[], array[]], # camera focal len, each inner array has len 1 (shape 2x1)
+        'w': width, # int
+        'h': height, # int
+        'name': 'test_cam_1'
+    },
+    {
+        'R': arrray[array[], array[], array[]] # rotation matrix, each inner array has len 3 (shape 3x3)
+        'T': arrray[array[], array[], array[]] # rotation matrix, each inner array has len 1 (shape 3x1)
+        'c': arrray[array[], array[]], # camera center, each inner array has len 1 (shape 2x1)
+        'f': arrray[array[], array[]], # camera focal len, each inner array has len 1 (shape 2x1)
+        'w': width, # int
+        'h': height, # int
+        'name': 'test_cam_2'
+    },
+    ...
+}
+```
+
+```joint2d_rel_stats.pkl```
+```bash
+{
+    'mean': array shape of (num_joints x 2), # mean of joints coordinates
+    'std': array shape of (num_joints x 2) # std of joints coordinates
+}
+```
+
+```joint2d_stats.pkl```
+```bash
+{
+    'mean': array shape of (num_joints x 2), # mean of joints coordinates
+    'std': array shape of (num_joints x 2) # std of joints coordinates
+}
+```
+
+```joint3d_rel_stats.pkl```
+```bash
+{
+    'mean': array shape of (num_joints x 3), # mean of joints coordinates
+    'std': array shape of (num_joints x 3) # std of joints coordinates
+}
+```
+
+```joint3d_stats.pkl```
+```bash
+{
+    'mean': array shape of (num_joints x 3), # mean of joints coordinates
+    'std': array shape of (num_joints x 3) # std of joints coordinates
+}
+```
+
+```mpi_inf_3dhp_test_valid.npz```
+```bash
+{
+    'imgname': [], # list of .jpg images
+    'center': [], # list of centers with shape (num_imgs x 2)
+    'scale': [], # list of scale ratio with len num_imgs
+    'part': [[[]]], # list of join 2d with shape (num_imgs x num_joins x 3) (include confidence score ?) 
+    'S': [[[]]] # list of join 3d with shape (num_imgs x num_joins x 3) (include confidence score ?)
+}
+```
+
+
 ## Evaluation and Inference
 To evaluate the dataset:
 ```bash
