@@ -121,7 +121,7 @@ Where each file has the following format:
 }
 ```
 
-```mpi_inf_3dhp_test_valid.npz```
+```mpi_inf_3dhp_test_valid.npz``` and ```mpi_inf_3dhp_train.npz``` 
 ```bash
 {
     'imgname': [], # list of .jpg images
@@ -131,7 +131,6 @@ Where each file has the following format:
     'S': [[[]]] # list of join 3d with shape (num_imgs x num_joins x 3) (include confidence score ?)
 }
 ```
-
 
 ## Evaluation and Inference
 To evaluate the dataset:
