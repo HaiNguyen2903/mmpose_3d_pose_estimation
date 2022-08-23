@@ -5,6 +5,9 @@ from argparse import ArgumentParser
 
 import cv2
 import mmcv
+from IPython import embed
+import json
+import numpy as np
 
 from mmpose.apis import (collect_multi_frames, inference_top_down_pose_model,
                          init_pose_model, process_mmdet_results,
@@ -77,12 +80,17 @@ def main():
         help='inference mode. If set to True, can not use future frame'
         'information when using multi frames for inference in the pose'
         'estimation stage. Default: False.')
+    parser.add_argument(
+        '--save_anno',
+        action='store_true',
+        default=False,
+        help='save_anno_file')
 
     assert has_mmdet, 'Please install mmdet to run the demo.'
 
     args = parser.parse_args()
 
-    assert args.show or (args.out_video_root != '')
+    # assert args.show or (args.out_video_root != '')
     assert args.det_config is not None
     assert args.det_checkpoint is not None
 
@@ -137,6 +145,9 @@ def main():
     # e.g. use ('backbone', ) to return backbone feature
     output_layer_names = None
 
+    out_anno_path = '2d_results/175_30s_2d_anno.json'
+    out_anno = []
+
     print('Running inference...')
     for frame_id, cur_frame in enumerate(mmcv.track_iter_progress(video)):
         # get the detection results of current frame
@@ -161,6 +172,12 @@ def main():
             dataset_info=dataset_info,
             return_heatmap=return_heatmap,
             outputs=output_layer_names)
+
+        if args.save_anno:
+            for obj in pose_results:
+                obj['keypoints'] = obj['keypoints'].tolist()
+                obj['bbox'] = obj['bbox'].tolist()
+            out_anno.append(pose_results)
 
         # show the results
         vis_frame = vis_pose_result(
@@ -187,6 +204,12 @@ def main():
         videoWriter.release()
     if args.show:
         cv2.destroyAllWindows()
+
+    if args.save_anno:
+        # data = json.dumps(out_anno)
+        with open(out_anno_path, 'w') as f:
+            json.dump(out_anno, f)
+    
 
 
 if __name__ == '__main__':

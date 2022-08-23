@@ -136,3 +136,4 @@ docs/**/modelzoo.md
 vis_result
 pretrained_weights
 wandb
+2d_results

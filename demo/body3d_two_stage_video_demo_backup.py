@@ -9,8 +9,6 @@ import cv2
 import mmcv
 import numpy as np
 
-from IPython import embed
-
 from mmpose.apis import (collect_multi_frames, extract_pose_sequence,
                          get_track_id, inference_pose_lifter_model,
                          inference_top_down_pose_model, init_pose_model,
@@ -279,12 +277,6 @@ def main():
         'detection stage. Default: False.')
 
     parser.add_argument(
-        '--save-vid',
-        action='store_true',
-        default=False,
-        help='save video file. Default: False.')
-
-    parser.add_argument(
         '--save-anno',
         action='store_true',
         default=False,
@@ -393,11 +385,11 @@ def main():
         '(2D-to-3D lifting)'
     pose_lift_dataset = pose_lift_model.cfg.data['test']['type']
 
-    if args.out_video_root != '' and args.save_vid:
+    if args.out_video_root == '':
+        save_out_video = False
+    else:
         os.makedirs(args.out_video_root, exist_ok=True)
         save_out_video = True
-    else:
-        save_out_video = False
 
     if save_out_video:
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -438,9 +430,6 @@ def main():
         pose_lift_dataset_info = DatasetInfo(pose_lift_dataset_info)
 
     print('Running 2D-to-3D pose lifting inference...')
-
-    out_anno = []
-
     for i, pose_det_results in enumerate(
             mmcv.track_iter_progress(pose_det_results_list)):
         # extract and pad input pose2d sequence
@@ -510,24 +499,7 @@ def main():
                              f'vis_{osp.basename(args.video_path)}'), fourcc,
                     fps, (img_vis.shape[1], img_vis.shape[0]))
             writer.write(img_vis)
-        
-        # save anno
-        if args.save_anno:
-            # get 3d kpts of first object for each frame (only get 1st obj kpts)
-            out_kpts = pose_lift_results_vis[0]['keypoints_3d']
-            # kpt order that not include center spin 
-            kpts_order = [14, 8, 9, 10, 11, 12, 13, 15, 1, 16, 2, 3, 4, 5, 6, 7]
-            out_kpts_ordered = [out_kpts[i] for i in kpts_order]
-            # insert low-center spin kpt
-            extra_kpt = [(coord1 + coord2) / 2 for (coord1, coord2) in zip (out_kpts_ordered[0], out_kpts_ordered[7])]
-            out_kpts_ordered.insert(7, extra_kpt)
-            out_anno.append(out_kpts_ordered)
-    
-    # convert and save to npy file
-    out_path = osp.join(args.out_video_root, f'vis_{osp.basename(args.video_path)[:4]}.npy')
-    out_anno = np.array(out_anno)
-    np.save(out_path, out_anno)
-    
+
     if save_out_video:
         writer.release()
 

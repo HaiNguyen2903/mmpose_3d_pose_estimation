@@ -11,8 +11,8 @@ run.name = 'log video inference'
 # run.log_artifact(infer_old)
 
 
-infer_new = wandb.Artifact('test', type='3D Pose Inferences')
+infer_new = wandb.Artifact('2d_results', type='3D Pose Inferences')
 
-infer_new.add_file('/home/ducanh/hain/code/mmpose_3d_pose_estimation/vis_result/vis_yoga_15s.mp4')
+infer_new.add_file('/home/ducanh/hain/code/mmpose_3d_pose_estimation/2d_results/vis_175.mp4')
 
 run.log_artifact(infer_new)

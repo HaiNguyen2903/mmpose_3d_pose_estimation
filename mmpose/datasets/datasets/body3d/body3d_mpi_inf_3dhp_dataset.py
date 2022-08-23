@@ -43,6 +43,8 @@ class Body3DMpiInf3dhpDataset(Kpt3dSviewKpt2dDataset):
         15: 'spine',
         16: 'head'
 
+    Re-order to transform to bvh format: [14, 8, 9, 10, 11, 12, 13, 15, 1, 16, 2, 3, 4, 5, 6, 7]
+
     Args:
         ann_file (str): Path to the annotation file.
         img_prefix (str): Path to a directory where images are held.
