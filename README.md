@@ -146,8 +146,8 @@ Where:
 
 To inference on specific videos:
 ```bash
-python demo/body3d_two_stage_video_demo.py demo/mmdetection_cfg/faster_rcnn_r50_fpn_coco.py \ https://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/faster_rcnn_r50_fpn_1x_coco/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth \ configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/hrnet_w48_coco_256x192.py \ https://download.openmmlab.com/mmpose/top_down/hrnet/hrnet_w48_coco_256x192-b9e0b3ab_20200708.pth \ configs/body/3d_kpt_sview_rgb_vid/video_pose_lift/mpi_inf_3dhp/videopose3d_mpi-inf-3dhp_1frame_fullconv_supervised_gt.py \ pretrained_weights/videopose_mpi-inf-3dhp_1frame_fullconv_supervised_gt-d6ed21ef_20210603.pth \
---video_path /home/ducanh/hain/dataset/yoga_15s.mp4 --out-video-root vis_result --rebase-keypoint-height
+python demo/body3d_two_stage_video_demo.py demo/mmdetection_cfg/faster_rcnn_r50_fpn_coco.py https://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/faster_rcnn_r50_fpn_1x_coco/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/hrnet_w48_coco_256x192.py https://download.openmmlab.com/mmpose/top_down/hrnet/hrnet_w48_coco_256x192-b9e0b3ab_20200708.pth configs/body/3d_kpt_sview_rgb_vid/video_pose_lift/mpi_inf_3dhp/videopose3d_mpi-inf-3dhp_1frame_fullconv_supervised_gt.py
+pretrained_weights/videopose_mpi-inf-3dhp_1frame_fullconv_supervised_gt-d6ed21ef_20210603.pth --video_path /home/ducanh/hain/dataset/yoga_15s.mp4 --out-video-root vis_result --rebase-keypoint-height
 ```
 
 Where the args params represents config file and model ckpt for: ```2d bounding boxes detection```, ```2d keypoints detection``` and ```3d keypoints detection``` respectively.
