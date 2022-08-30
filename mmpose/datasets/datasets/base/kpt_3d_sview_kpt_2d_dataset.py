@@ -208,6 +208,10 @@ class Kpt3dSviewKpt2dDataset(Dataset, metaclass=ABCMeta):
             if 'w' in _cam_param and 'h' in _cam_param:
                 results['image_width'] = _cam_param['w']
                 results['image_height'] = _cam_param['h']
+        # additional condition to train without camera param file
+        else:
+            results['image_width'] = 2048
+            results['image_height'] = 2048
 
         return results
 

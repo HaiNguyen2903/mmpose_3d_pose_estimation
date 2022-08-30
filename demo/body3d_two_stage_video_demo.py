@@ -342,6 +342,8 @@ def main():
     # e.g. use ('backbone', ) to return backbone feature
     output_layer_names = None
 
+
+
     print('Running 2D pose detection inference...')
     for frame_id, cur_frame in enumerate(mmcv.track_iter_progress(video)):
         pose_det_results_last = pose_det_results
@@ -469,6 +471,14 @@ def main():
         pose_lift_results_vis = []
         for idx, res in enumerate(pose_lift_results):
             keypoints_3d = res['keypoints_3d']
+
+            # get half body by cutting 1/3 lower image (img height = 1080)
+            # reduce y axis
+            # keypoints_3d[2] = keypoints_3d[0] - 1080 / 3
+            # for kpt in keypoints_3d:
+            #     kpt[0] = kpt[0] - 1080 / 3
+
+
             # exchange y,z-axis, and then reverse the direction of x,z-axis
             keypoints_3d = keypoints_3d[..., [0, 2, 1]]
             keypoints_3d[..., 0] = -keypoints_3d[..., 0]

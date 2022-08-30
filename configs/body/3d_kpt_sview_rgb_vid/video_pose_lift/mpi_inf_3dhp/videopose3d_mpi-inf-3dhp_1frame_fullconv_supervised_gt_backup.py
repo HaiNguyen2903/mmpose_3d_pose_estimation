@@ -4,7 +4,7 @@ _base_ = [
 ]
 
 # adding load ckpt script
-# load_from = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/pretrained_weights/simplebaseline3d_mpi-inf-3dhp-b75546f6_20210603.pth'
+load_from = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/pretrained_weights/simplebaseline3d_mpi-inf-3dhp-b75546f6_20210603.pth'
 
 evaluation = dict(
     interval=1,
@@ -27,7 +27,7 @@ lr_config = dict(
 total_epochs = 2
 
 log_config = dict(
-    interval=10,
+    interval=20,
     hooks=[
         dict(type='TextLoggerHook'),
         # dict(type='TensorboardLoggerHook')
@@ -75,7 +75,7 @@ train_data_cfg = dict(
     causal=False,
     temporal_padding=False,
     joint_2d_src='gt',
-    need_camera_param=False,
+    need_camera_param=True,
     camera_param_file=f'{data_root}/annotations/cameras_train.pkl',
 )
 test_data_cfg = dict(
@@ -85,7 +85,7 @@ test_data_cfg = dict(
     causal=False,
     temporal_padding=False,
     joint_2d_src='gt',
-    need_camera_param=False,
+    need_camera_param=True,
     camera_param_file=f'{data_root}/annotations/cameras_test.pkl',
 )
 

@@ -156,6 +156,7 @@ def test_pose_lifter_forward():
 
     # Test forward train for supervised learning with pose model and trajectory
     # model sharing one backbone
+    
     model_cfg = dict(
         type='PoseLifter',
         pretrained=None,

@@ -12,6 +12,7 @@ from mmpose.core.post_processing import (affine_transform, fliplr_regression,
                                          get_affine_transform)
 from mmpose.datasets.builder import PIPELINES
 
+from IPython import embed
 
 @PIPELINES.register_module()
 class GetRootCenteredPose:
@@ -158,6 +159,8 @@ class ImageCoordinateNormalization:
             self.camera_param = camera_param
 
     def __call__(self, results):
+        # print(results)
+        # exit()
         center = np.array(
             [0.5 * results['image_width'], 0.5 * results['image_height']],
             dtype=np.float32)

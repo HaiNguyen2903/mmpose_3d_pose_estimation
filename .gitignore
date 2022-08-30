@@ -133,7 +133,7 @@ docs/**/modelzoo.md
 *.DS_Store
 
 # additional exp dirs and files
-vis_result
+vis_results
 pretrained_weights
 wandb
 2d_results

@@ -15,11 +15,11 @@ def xyxy2xywh(bbox):
     return [x1, y1, x2-x1, y2-y1, conf]
 
 if __name__ == '__main__':
-    json_path = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/2d_results/175_30s_2d_anno.json'
+    json_path = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/2d_results/175_30s_2d_anno_new.json'
     dst_root = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/2d_results/posetrack18_format'
-    detection_save_path = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/2d_results/posetrack18_format/2dtrack_val_human_detections.json'
-    poseval_save_path = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/2d_results/posetrack18_format/2dtrack_val.json'
-    posetrain_save_path = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/2d_results/posetrack18_format/2dtrack_train.json'
+    detection_save_path = f'{dst_root}/2dtrack_val_human_detections.json'
+    poseval_save_path = f'{dst_root}/2dtrack_val.json'
+    posetrain_save_path = f'{dst_root}/2dtrack_train.json'
 
     f = open(json_path)
     data = json.load(f)
@@ -31,23 +31,23 @@ if __name__ == '__main__':
     '''
     Generate human detection json file
     '''
-    # for i in range(len(data)):
-    #     # each frame has 1 person
-    #     obj = data[i][0]
-    #     bbox = obj['bbox']
-    #     bbox = xyxy2xywh(bbox)
+    for i in range(len(data)):
+        # each frame has 1 person
+        obj = data[i][0]
+        bbox = obj['bbox']
+        bbox = xyxy2xywh(bbox)
         
-    #     obj_info = dict(
-    #         image_id = "{:05}".format(i),
-    #         bbox = bbox[:3],
-    #         score = bbox[4],
-    #         category_id = 1
-    #     )
+        obj_info = dict(
+            image_id = "{:06}".format(i),
+            bbox = bbox[:4],
+            score = bbox[4],
+            category_id = 1
+        )
         
-    #     detection_content.append(obj_info)
+        detection_content.append(obj_info)
 
-    # with open(detection_save_path, 'w') as f:
-    #     json.dump(detection_content, f)
+    with open(detection_save_path, 'w') as f:
+        json.dump(detection_content, f)
 
 
     
@@ -107,11 +107,11 @@ if __name__ == '__main__':
         # create img info for each frame
         img_info = dict(
             has_no_densepose = True,
-            is_labeled = False,
-            file_name = 'images/val/{:05}.jpg'.format(i),
+            is_labeled = True,
+            file_name = '../images/val/{:06}.jpg'.format(i),
             nframes = 900,
             frame_id = i,
-            id = 1,
+            id = i,
             width = 608,
             height = 1080
         )
@@ -121,6 +121,7 @@ if __name__ == '__main__':
         # create anno info for each frame
         # each frame has 1 person
         obj = data[i][0]
+        bbox = obj['bbox']
         origin_kpts = obj['keypoints']
         new_kpts = []
         for joint in origin_kpts:
@@ -128,9 +129,12 @@ if __name__ == '__main__':
 
         anno_info = dict(
             keypoints = new_kpts,
+            track_id = 1,
+            image_id = "{:06}".format(i),
+            bbox = xyxy2xywh(bbox)[:4],
             scores = [],
             category_id = 1,
-            id = 1,
+            id = i,
             iscrowd = False,
             num_keypoints = 17
         )
@@ -202,20 +206,20 @@ if __name__ == '__main__':
         # create img info for each frame
         img_info = dict(
             has_no_densepose = True,
-            is_labeled = False,
-            file_name = 'images/train/{:05}.jpg'.format(i),
+            is_labeled = True,
+            file_name = '../images/train/{:06}.jpg'.format(i),
             nframes = 900,
             frame_id = i,
-            id = 1,
+            id = i,
             width = 608,
             height = 1080
         )
         imgs_info.append(img_info)
 
-
         # create anno info for each frame
         # each frame has 1 person
         obj = data[i][0]
+        bbox = obj['bbox']
         origin_kpts = obj['keypoints']
         new_kpts = []
         for joint in origin_kpts:
@@ -223,16 +227,19 @@ if __name__ == '__main__':
 
         anno_info = dict(
             keypoints = new_kpts,
+            track_id = 1,
+            image_id = "{:06}".format(i),
+            bbox = xyxy2xywh(bbox)[:4],
             scores = [],
             category_id = 1,
-            id = 1,
+            id = i,
             iscrowd = False,
             num_keypoints = 17
         )
 
         annos_info.append(anno_info)
 
-    pose_val_content = dict(
+    pose_train_content = dict(
         categories = cate_info,
         images = imgs_info,
         annotations = annos_info
