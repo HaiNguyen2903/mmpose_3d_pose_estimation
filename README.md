@@ -49,8 +49,8 @@ Where each file has the following format:
     {
         'c': arrray[array[], array[]], # camera center, each inner array has len 1 (shape 2x1)
         'f': arrray[array[], array[]], # camera focal len, each inner array has len 1 (shape 2x1)
-        'w': width, # int
-        'h': height, # int
+        'w': width, # image width (int)
+        'h': height, # image height (int)
         'name': 'test_cam_1'
     },
     {
