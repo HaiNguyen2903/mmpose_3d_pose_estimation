@@ -1,10 +1,13 @@
 _base_ = [
     '../../../../_base_/default_runtime.py',
-    '../../../../_base_/datasets/mpi_inf_3dhp.py'
+    '../../../../_base_/datasets//custom_3d_pose_mpi_format.py'
 ]
 
 # adding load ckpt script
-# load_from = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/pretrained_weights/simplebaseline3d_mpi-inf-3dhp-b75546f6_20210603.pth'
+load_from = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/pretrained_weights/simplebaseline3d_mpi-inf-3dhp-b75546f6_20210603.pth'
+
+dataset_type = 'Custom3DPoseMPIFormatDataset'
+# dataset_type = 'Body3DMpiInf3dhpDataset'
 
 evaluation = dict(
     interval=1,
@@ -24,7 +27,7 @@ lr_config = dict(
     gamma=0.98,
 )
 
-total_epochs = 2
+total_epochs = 10
 
 log_config = dict(
     interval=10,
@@ -66,7 +69,7 @@ model = dict(
 # data settings
 # data_root = 'data/mpi_inf_3dhp'
 
-data_root = '/home/ducanh/hain/dataset/MPI_INF_3DHF/mmpose_format'
+data_root = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/2d_results/mpi_3dhf_format'
 
 train_data_cfg = dict(
     num_joints=17,
@@ -75,7 +78,7 @@ train_data_cfg = dict(
     causal=False,
     temporal_padding=False,
     joint_2d_src='gt',
-    need_camera_param=False,
+    need_camera_param=True,
     camera_param_file=f'{data_root}/annotations/cameras_train.pkl',
 )
 test_data_cfg = dict(
@@ -85,7 +88,7 @@ test_data_cfg = dict(
     causal=False,
     temporal_padding=False,
     joint_2d_src='gt',
-    need_camera_param=False,
+    need_camera_param=True,
     camera_param_file=f'{data_root}/annotations/cameras_test.pkl',
 )
 
@@ -140,22 +143,22 @@ data = dict(
     val_dataloader=dict(samples_per_gpu=128),
     test_dataloader=dict(samples_per_gpu=128),
     train=dict(
-        type='Body3DMpiInf3dhpDataset',
-        ann_file=f'{data_root}/annotations/mpi_inf_3dhp_train.npz',
+        type=dataset_type,
+        ann_file=f'{data_root}/annotations/train.npz',
         img_prefix=f'{data_root}/images/',
         data_cfg=train_data_cfg,
         pipeline=train_pipeline,
         dataset_info={{_base_.dataset_info}}),
     val=dict(
-        type='Body3DMpiInf3dhpDataset',
-        ann_file=f'{data_root}/annotations/mpi_inf_3dhp_test_valid.npz',
+        type=dataset_type,
+        ann_file=f'{data_root}/annotations/val.npz',
         img_prefix=f'{data_root}/images/',
         data_cfg=test_data_cfg,
         pipeline=val_pipeline,
         dataset_info={{_base_.dataset_info}}),
     test=dict(
-        type='Body3DMpiInf3dhpDataset',
-        ann_file=f'{data_root}/annotations/mpi_inf_3dhp_test_valid.npz',
+        type=dataset_type,
+        ann_file=f'{data_root}/annotations/val.npz',
         img_prefix=f'{data_root}/images/',
         data_cfg=test_data_cfg,
         pipeline=test_pipeline,

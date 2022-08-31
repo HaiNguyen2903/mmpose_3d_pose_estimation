@@ -42,7 +42,7 @@ def convert_keypoint_definition(keypoints, pose_det_dataset,
         ndarray[K, 2 or 3]: the transformed 2D keypoints.
     """
     assert pose_lift_dataset in [
-        'Body3DH36MDataset', 'Body3DMpiInf3dhpDataset'
+        'Body3DH36MDataset', 'Body3DMpiInf3dhpDataset', 'Custom3DPoseMPIFormatDataset'
         ], '`pose_lift_dataset` should be `Body3DH36MDataset` ' \
         f'or `Body3DMpiInf3dhpDataset`, but got {pose_lift_dataset}.'
 
@@ -469,15 +469,12 @@ def main():
 
         # Pose processing
         pose_lift_results_vis = []
+
         for idx, res in enumerate(pose_lift_results):
             keypoints_3d = res['keypoints_3d']
 
-            # get half body by cutting 1/3 lower image (img height = 1080)
-            # reduce y axis
-            # keypoints_3d[2] = keypoints_3d[0] - 1080 / 3
-            # for kpt in keypoints_3d:
-            #     kpt[0] = kpt[0] - 1080 / 3
-
+            # save 3d annotations for first person
+            out_anno.append(keypoints_3d)
 
             # exchange y,z-axis, and then reverse the direction of x,z-axis
             keypoints_3d = keypoints_3d[..., [0, 2, 1]]
@@ -522,21 +519,24 @@ def main():
             writer.write(img_vis)
         
         # save anno
-        if args.save_anno:
-            # get 3d kpts of first object for each frame (only get 1st obj kpts)
-            out_kpts = pose_lift_results_vis[0]['keypoints_3d']
-            # kpt order that not include center spin 
-            kpts_order = [14, 8, 9, 10, 11, 12, 13, 15, 1, 16, 2, 3, 4, 5, 6, 7]
-            out_kpts_ordered = [out_kpts[i] for i in kpts_order]
-            # insert low-center spin kpt
-            extra_kpt = [(coord1 + coord2) / 2 for (coord1, coord2) in zip (out_kpts_ordered[0], out_kpts_ordered[7])]
-            out_kpts_ordered.insert(7, extra_kpt)
-            out_anno.append(out_kpts_ordered)
+        # if args.save_anno:
+            # # get 3d kpts of first object for each frame (only get 1st obj kpts)
+            # out_kpts = pose_lift_results_vis[0]['keypoints_3d']
+            # # kpt order that not include center spin 
+            # kpts_order = [14, 8, 9, 10, 11, 12, 13, 15, 1, 16, 2, 3, 4, 5, 6, 7]
+            # out_kpts_ordered = [out_kpts[i] for i in kpts_order]
+            # # insert low-center spin kpt
+            # extra_kpt = [(coord1 + coord2) / 2 for (coord1, coord2) in zip (out_kpts_ordered[0], out_kpts_ordered[7])]
+            # out_kpts_ordered.insert(7, extra_kpt)
+            # out_anno.append(out_kpts_ordered)
+
+
     
-    # convert and save to npy file
-    out_path = osp.join(args.out_video_root, f'vis_{osp.basename(args.video_path)[:4]}.npy')
-    out_anno = np.array(out_anno)
-    np.save(out_path, out_anno)
+    if args.save_anno:
+        # convert and save to npy file
+        out_path = osp.join(args.out_video_root, f'vis_{osp.basename(args.video_path).split(".")[0]}.npy')
+        out_anno = np.array(out_anno)
+        np.save(out_path, out_anno)
     
     if save_out_video:
         writer.release()

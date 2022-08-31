@@ -20,6 +20,7 @@ from mmpose.models import build_posenet
 from mmpose.utils import collect_env, get_root_logger, setup_multi_processes
 
 from mmpose.datasets.datasets.custom_dataset.custom_2d_pose import Custom_2D_Dataset
+from mmpose.datasets.datasets.custom_dataset.custom_3d_pose_mpi_format import Custom3DPoseMPIFormatDataset
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train a pose model')
