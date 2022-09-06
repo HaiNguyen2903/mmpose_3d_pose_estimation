@@ -187,6 +187,12 @@ if __name__ == '__main__':
 
     new_joints_2d = np.array(new_joints_2d)[:,:,:2]
 
+    #  # set lower body coord = -1
+    lower_body_idx = [9, 10, 12, 13]
+    for idx in lower_body_idx:
+        new_joints_2d[:, idx, :] = -1
+
+
     joints_3d = np.load(result_3d)[:, :, :3]
     # for idx in lower_body_idx:
     #     joints_3d[:, idx, :] = -1
