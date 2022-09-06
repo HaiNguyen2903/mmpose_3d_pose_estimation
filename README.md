@@ -160,6 +160,7 @@ Also replace camera param file and annotation paths in ```train_data_cfg```, ```
 ```bash
 python tools/train.py {path/to/train/config/file} --work-dir {path/to/save/output/dir} --gpu-id 0
 ```
+For default, the model will be evaluted every epoch, and the ```video_pose_lift``` model only need bbox width and height information in camera annotation files.
 
 <strong>Evaluating script</strong>:
 ```bash
