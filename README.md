@@ -1,46 +1,32 @@
-# Extra Tutorial for running 3D Pose Estimation
-Since I cannot prepare the Human3.6M dataset, the tutorial will run on the MPI-INF-3DHP dataset.
+# Additional Manual for custom Training and Inference 3D Pose Estimation (SmartCube)
 
-## Prepare the dataset
-### Step 0. Download the above dataset
-### Step 1. Prepare the dataset for training and testing
-Reformat the dataset to the following format:
+<details><summary><h3>1. Setup environment and required libraries</h3></summary>
+Please follow the instruction <a href="https://mmpose.readthedocs.io/en/latest/install.html#">here</a>.
+</details>
 
-```bash
-data_root
-    |-- train
-        |-- S1
-            |-- Seq1
-            |-- Seq2
-        |-- S2
-        |-- ...
-    |-- test
-        |-- TS1
-        |-- TS2
-        |-- ...
-```
-Run the following script to prepare the dataset:
-```bash
-python tools/dataset/preprocess_mpi_inf_3dhp.py --data_root {path to data root} --out_dir {path to out dir}
-```
-The output dir will have the following structure:
-```bash
-data_root
-    |
-    |___annotations
-    |       |___cameras_test.pkl
-    |       |___cameras_train.pkl
-    |       |___joint2d_rel_stats.pkl
-    |       |___joint2d_stats.pkl
-    |       |___joint3d_rel_stats.pkl
-    |       |___joint3d_stats.pkl
-    |       |___mpi_inf_3dhp_test_valid.npz
-    |       |___mpi_inf_3dhp_train.npz
-    |
-    |___images
-            |___*.jpg
-```
+<details><summary><h3>2. Dataset Preparation</h3></summary>
 
+<details><summary><h4>2.1. Dataset Format</h4></summary>
+
+The best format to use for 2D and 3D dataset should be MPI-IDF-3DHF format, which is structured as:
+```bash
+root
+  |__annotations
+  |       |___cameras_test.pkl
+  |       |___cameras_train.pkl
+  |       |___joint2d_rel_stats.pkl
+  |       |___joint2d_stats.pkl
+  |       |___joint3d_rel_stats.pkl
+  |       |___joint3d_stats.pkl
+  |       |___mpi_inf_3dhp_test_valid.npz
+  |       |___mpi_inf_3dhp_train.npz
+  |
+  |__images # name format for only 1 camera and 1 subject
+        |__S1_Seq1_Cam0_000000.jpg
+        |__S1_Seq1_Cam0_000001.jpg
+        |__...
+  
+```
 Where each file has the following format:
 
 ```cameras_test.pkl```
@@ -56,8 +42,8 @@ Where each file has the following format:
     {
         'c': arrray[array[], array[]], # camera center, each inner array has len 1 (shape 2x1)
         'f': arrray[array[], array[]], # camera focal len, each inner array has len 1 (shape 2x1)
-        'w': width, # int
-        'h': height, # int
+        'w': width, # image width (int)
+        'h': height, # image height (int)
         'name': 'test_cam_2'
     },
     ...
@@ -89,7 +75,7 @@ Where each file has the following format:
 }
 ```
 
-```joint2d_rel_stats.pkl``` (coordinate around root)
+```joint2d_rel_stats.pkl``` (coordinate relative to root)
 ```bash
 {
     'mean': array shape of (num_joints x 2), # mean of joints coordinates
@@ -105,7 +91,7 @@ Where each file has the following format:
 }
 ```
 
-```joint3d_rel_stats.pkl``` (coordinate around root)
+```joint3d_rel_stats.pkl``` (coordinate relative to root)
 ```bash
 {
     'mean': array shape of (num_joints x 3), # mean of joints coordinates
@@ -132,25 +118,70 @@ Where each file has the following format:
 }
 ```
 
-## Evaluation and Inference
-To evaluate the dataset:
+If you want to use the original <strong>MPI-IDF-3DHF</strong> dataset, download the dataset and prepare the data folder as:
+
+```bash
+data_root
+    |-- train
+        |-- S1
+            |-- Seq1
+            |-- Seq2
+        |-- S2
+        |-- ...
+    |-- test
+        |-- TS1
+        |-- TS2
+        |-- ...
+```
+Run the following script to prepare the dataset:
+```bash
+python tools/dataset/preprocess_mpi_inf_3dhp.py --data_root {path to data root} --out_dir {path to out dir}
+```
+
+</details>
+<details><summary><h4>2.2 Adding custom dataset</h4></summary>
+Please prepare the dataset following the instructure <a href="https://mmpose.readthedocs.io/en/latest/tutorials/2_new_dataset.html">here</a>. Some main steps are:
+
+- Adding dataset info in ```configs/_base_/datasets/{custom_dataset_name}.py```
+- Adding dataset config in ```mmpose/datasets/datasets/datasets/custom_datset/{custom_dataset_name}.py```
+- Registering dataset name in the above dataset config file
+- Set the ```dataset_name``` variable in dataset info file by the name of the dataset class in config file
+</details>
+
+</details>
+
+<details><summary><h3>3. Training and Inference</h3></summary>
+
+In train config file, (e.x: ```configs/body/3d_kpt_sview_rgb_vid/video_pose_lift/mpi_inf_3dhp/videopose3d_mpi-inf-3dhp_1frame_fullconv_supervised_gt.py```), replace the ```dataset_type``` to the dataset class name and ```data_root``` to path to data directory.
+
+Also replace camera param file and annotation paths in ```train_data_cfg```, ```test_data_cfg``` and ```data```.
+
+<strong>Training script</strong>:
+```bash
+python tools/train.py {path/to/train/config/file} --work-dir {path/to/save/output/dir} --gpu-id 0
+```
+
+<strong>Evaluating script</strong>:
 ```bash
 python tools/test.py {path to config file} {path to model ckpt} --work-dir {out dir}
 ```
 
-Where:
+Where: (e.x)
 
 ```config file```: ```/home/ducanh/hain/code/mmpose_3d_pose_estimation/configs/body/3d_kpt_sview_rgb_vid/video_pose_lift/mpi_inf_3dhp/videopose3d_mpi-inf-3dhp_1frame_fullconv_supervised_gt.py```
 
 ```model ckpt```: get model ckpt in ```/home/ducanh/hain/code/mmpose_3d_pose_estimation/configs/body/3d_kpt_sview_rgb_vid/video_pose_lift/mpi_inf_3dhp/videopose3d_mpi-inf-3dhp.yml```
 
-To inference on specific videos:
+
+<strong>Inferencing script</strong>:
 ```bash
 python demo/body3d_two_stage_video_demo.py demo/mmdetection_cfg/faster_rcnn_r50_fpn_coco.py https://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/faster_rcnn_r50_fpn_1x_coco/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/hrnet_w48_coco_256x192.py https://download.openmmlab.com/mmpose/top_down/hrnet/hrnet_w48_coco_256x192-b9e0b3ab_20200708.pth configs/body/3d_kpt_sview_rgb_vid/video_pose_lift/mpi_inf_3dhp/videopose3d_mpi-inf-3dhp_1frame_fullconv_supervised_gt.py
 pretrained_weights/videopose_mpi-inf-3dhp_1frame_fullconv_supervised_gt-d6ed21ef_20210603.pth --video_path /home/ducanh/hain/dataset/yoga_15s.mp4 --out-video-root vis_result --rebase-keypoint-height
 ```
 
 Where the args params represents config file and model ckpt for: ```2d bounding boxes detection```, ```2d keypoints detection``` and ```3d keypoints detection``` respectively.
+
+</details>
 
 
 # Author's Tutorial
