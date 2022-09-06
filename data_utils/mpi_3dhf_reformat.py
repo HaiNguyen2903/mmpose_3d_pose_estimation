@@ -18,8 +18,10 @@ def get_pose_stats(kps):
     assert kps.ndim > 2
     K, C = kps.shape[-2:]
     kps = kps.reshape(-1, K, C)
-    mean = kps.mean(axis=0, where=kps>0)
-    std = kps.std(axis=0, where=kps>0)
+    # mean = kps.mean(axis=0, where=kps>0)
+    # std = kps.std(axis=0, where=kps>0)
+    mean = kps.mean(axis=0)
+    std = kps.std(axis=0)
     return mean, std
 
 
@@ -82,7 +84,7 @@ if __name__ == '__main__':
     imgnames = ['S1_Seq1_Cam0_{:06}.jpg'.format(i) for i in range(900)]
     
     joints_2d = [frame[0]['keypoints'] for frame in data]
-    joints_2d = np.array([np.array(joint_2d)[:, :2] for joint_2d in joints_2d])
+    # joints_2d = np.array([np.array(joint_2d)[:, :2] for joint_2d in joints_2d])
 
     '''
     reorder and create new kpts to map with 3d kpts
@@ -117,34 +119,74 @@ if __name__ == '__main__':
     4 -> spine 
     '''
 
-    root_index = 14
+    # root_index = 14
+
+    # new_joints_2d = []
+
+    # # for each frame
+    # for joints in joints_2d:
+    #     # head top
+    #     joints[1] = np.array([(joints[1][i] + joints[2][i]) / 2 for i in range(2)])
+    #     # neck
+    #     joints[2] = np.array([(joints[5][i] + joints[6][i]) / 2 for i in range(2)])
+    #     # root (pelvis)
+    #     joints[3] = np.array([(joints[11][i] + joints[12][i]) / 2 for i in range(2)])
+    #     # spine
+    #     joints[4] = np.array([(joints[2][i] + joints[3][i]) / 2 for i in range(2)])
+
+    #     reorder_idx = [1, 2, 6, 8, 10, 5, 7, 9, 12, 14, 16, 11, 13, 15, 3, 4, 0]
+        
+    #     new_joints = np.array([joints[i] for i in reorder_idx])
+    #     new_joints_2d.append(new_joints)
+
+    # new_joints_2d = np.array(new_joints_2d)
+
+    #  # set lower body coord = -1
+    # lower_body_idx = [9, 10, 12, 13]
+    # # for idx in lower_body_idx:
+    # #     new_joints_2d[:, idx, :] = -1
+
+    '''
+    mmpose convert from 2d coco to 3d mpi_3dhf format
+
+    # pelvis (root) is in the middle of l_hip and r_hip
+    keypoints_new[14] = (keypoints[11] + keypoints[12]) / 2
+    # neck (bottom end of neck) is in the middle of
+    # l_shoulder and r_shoulder
+    keypoints_new[1] = (keypoints[5] + keypoints[6]) / 2
+    # spine (centre of torso) is in the middle of neck and root
+    keypoints_new[15] = (keypoints_new[1] + keypoints_new[14]) / 2
+
+    # in COCO, head is in the middle of l_eye and r_eye
+    # in PoseTrack18, head is in the middle of head_bottom and head_top
+    keypoints_new[16] = (keypoints[1] + keypoints[2]) / 2
+    '''
+
+    # keypoints_new = np.zeros((17, keypoints.shape[1]), dtype=keypoints.dtype)
 
     new_joints_2d = []
+    root_index=14
 
-    # for each frame
-    for joints in joints_2d:
-        # head top
-        joints[1] = np.array([(joints[1][i] + joints[2][i]) / 2 for i in range(2)])
-        # neck
-        joints[2] = np.array([(joints[5][i] + joints[6][i]) / 2 for i in range(2)])
-        # root (pelvis)
-        joints[3] = np.array([(joints[11][i] + joints[12][i]) / 2 for i in range(2)])
-        # spine
-        joints[4] = np.array([(joints[2][i] + joints[3][i]) / 2 for i in range(2)])
+    for joint in joints_2d:
+        new_joints = np.zeros((17, 3), dtype=np.float)
+        joint = np.array(joint)
+        new_joints[14] = (joint[11] + joint[12]) / 2
+        new_joints[1] = (joint[5] + joint[6]) / 2
+        new_joints[15] = (new_joints[1] + new_joints[14]) / 2
+        new_joints[16] = (joint[1] + joint[2]) / 2
 
-        reorder_idx = [1, 2, 6, 8, 10, 5, 7, 9, 12, 14, 16, 11, 13, 15, 3, 4, 0]
-        
-        new_joints = np.array([joints[i] for i in reorder_idx])
+        new_joints[0] = (4 * new_joints[16] -
+                                        new_joints[1]) / 3
+        new_joints[0, 2] = new_joints[16, 2]    
+
+        new_joints[2:14] = joint[[
+                    6, 8, 10, 5, 7, 9, 12, 14, 16, 11, 13, 15
+                ]]                          
+
         new_joints_2d.append(new_joints)
 
-    new_joints_2d = np.array(new_joints_2d)
+    new_joints_2d = np.array(new_joints_2d)[:,:,:2]
 
-     # set lower body coord = -1
-    lower_body_idx = [9, 10, 12, 13]
-    # for idx in lower_body_idx:
-    #     new_joints_2d[:, idx, :] = -1
-
-    
     joints_3d = np.load(result_3d)[:, :, :3]
     # for idx in lower_body_idx:
     #     joints_3d[:, idx, :] = -1

@@ -50,6 +50,7 @@ def convert_keypoint_definition(keypoints, pose_det_dataset,
         'TopDownCocoDataset', 'TopDownPoseTrack18Dataset',
         'TopDownPoseTrack18VideoDataset'
     ]
+
     keypoints_new = np.zeros((17, keypoints.shape[1]), dtype=keypoints.dtype)
     if pose_lift_dataset == 'Body3DH36MDataset':
         if pose_det_dataset in ['TopDownH36MDataset']:
@@ -104,7 +105,7 @@ def convert_keypoint_definition(keypoints, pose_det_dataset,
                 f'unsupported conversion between {pose_lift_dataset} and '
                 f'{pose_det_dataset}')
 
-    elif pose_lift_dataset == 'Body3DMpiInf3dhpDataset':
+    elif pose_lift_dataset == 'Body3DMpiInf3dhpDataset' or pose_lift_dataset == 'Custom3DPoseMPIFormatDataset':
         if pose_det_dataset in coco_style_datasets:
             # pelvis (root) is in the middle of l_hip and r_hip
             keypoints_new[14] = (keypoints[11] + keypoints[12]) / 2
@@ -341,8 +342,6 @@ def main():
     # return the output of some desired layers,
     # e.g. use ('backbone', ) to return backbone feature
     output_layer_names = None
-
-
 
     print('Running 2D pose detection inference...')
     for frame_id, cur_frame in enumerate(mmcv.track_iter_progress(video)):

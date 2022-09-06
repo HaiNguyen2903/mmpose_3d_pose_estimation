@@ -4,7 +4,7 @@ _base_ = [
 ]
 
 # adding load ckpt script
-load_from = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/pretrained_weights/simplebaseline3d_mpi-inf-3dhp-b75546f6_20210603.pth'
+load_from = '/home/ducanh/hain/code/mmpose_3d_pose_estimation/pretrained_weights/videopose_mpi-inf-3dhp_1frame_fullconv_supervised_gt-d6ed21ef_20210603.pth'
 
 dataset_type = 'Custom3DPoseMPIFormatDataset'
 # dataset_type = 'Body3DMpiInf3dhpDataset'
@@ -27,7 +27,7 @@ lr_config = dict(
     gamma=0.98,
 )
 
-total_epochs = 10
+total_epochs = 30
 
 log_config = dict(
     interval=10,
